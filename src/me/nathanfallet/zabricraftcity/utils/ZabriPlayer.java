@@ -1,0 +1,56 @@
+package me.nathanfallet.zabricraftcity.utils;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.bukkit.entity.Player;
+
+import me.nathanfallet.zabricraftcity.ZabriCraftCity;
+
+public class ZabriPlayer {
+
+	// Stored properties
+	private String uuid;
+
+	// Initializer
+	public ZabriPlayer(Player player) {
+		uuid = player.getUniqueId().toString();
+	}
+	
+	// Get UUID
+	public String getUUID(){
+		return uuid;
+	}
+	
+	// Get amount of emeralds
+	public int getEmeralds(){
+		try {
+			PreparedStatement state = ZabriCraftCity.getInstance().getConnection().prepareStatement("SELECT emeralds FROM players WHERE uuid = ?");
+			state.setString(1, uuid);
+			ResultSet result = state.executeQuery();
+			result.next();
+			int emeralds = result.getInt("emeralds");
+			result.close();
+			state.close();
+			return emeralds;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	// Set amount of emeralds
+	public void setEmeralds(int emeralds){
+		try {
+			PreparedStatement state = ZabriCraftCity.getInstance().getConnection().prepareStatement("UPDATE players SET emeralds = ? WHERE uuid = ?");
+			state.setDouble(1, emeralds);
+			state.setString(2, getUUID());
+			state.executeUpdate();
+			state.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+}

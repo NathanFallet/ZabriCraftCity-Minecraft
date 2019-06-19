@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.nathanfallet.zabricraftcity.commands.BankCmd;
 import me.nathanfallet.zabricraftcity.events.PlayerChat;
 import me.nathanfallet.zabricraftcity.events.PlayerJoin;
 import me.nathanfallet.zabricraftcity.events.PlayerQuit;
@@ -73,6 +74,9 @@ public class ZabriCraftCity extends JavaPlugin {
 			pm.registerEvents(new PlayerQuit(), this);
 			pm.registerEvents(new PlayerChat(), this);
 			
+			// Register commands
+			getCommand("bank").setExecutor(new BankCmd());
+			
 			// Update some shown informations
 			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
 				@Override
@@ -90,6 +94,15 @@ public class ZabriCraftCity extends JavaPlugin {
 			}, 0, 20);
 			
 		}
+	}
+	
+	// Disable
+	public void onDisable() {
+		// Clear objects
+		Leaderboard.clear();
+		
+		// Stop the game
+		// TODO
 	}
 	
 	// MySQL Database connection
