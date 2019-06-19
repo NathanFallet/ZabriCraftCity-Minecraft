@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -20,6 +21,8 @@ import me.nathanfallet.zabricraftcity.events.PlayerChat;
 import me.nathanfallet.zabricraftcity.events.PlayerJoin;
 import me.nathanfallet.zabricraftcity.events.PlayerQuit;
 import me.nathanfallet.zabricraftcity.utils.Leaderboard;
+import me.nathanfallet.zabricraftcity.utils.PlayerScoreboard;
+import me.nathanfallet.zabricraftcity.utils.ZabriPlayer;
 
 public class ZabriCraftCity extends JavaPlugin {
 	
@@ -81,9 +84,25 @@ public class ZabriCraftCity extends JavaPlugin {
 			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
 				@Override
 				public void run() {
-					// Update player name
+					// Updates
 					for (Player p : Bukkit.getOnlinePlayers()) {
+						// List name
 						p.setPlayerListName(p.getDisplayName());
+						
+						// Scoreboard
+						ZabriPlayer zp = new ZabriPlayer(p);
+						
+						ArrayList<String> lines = new ArrayList<String>();
+						lines.add("§b");
+						lines.add("§b§lBank: §b(/bank for more)");
+						lines.add("§f" + zp.getEmeralds() + " emeralds");
+						lines.add("§a");
+						lines.add("§a§lTime:");
+						lines.add("§fDay X - 00:00 (todo)");
+						lines.add("§e");
+						lines.add("§e§lPlugin by Nathan Fallet");
+						
+						PlayerScoreboard.get(p).update(p, lines);
 					}
 					
 					// Update leaderboards
@@ -100,6 +119,7 @@ public class ZabriCraftCity extends JavaPlugin {
 	public void onDisable() {
 		// Clear objects
 		Leaderboard.clear();
+		PlayerScoreboard.clear();
 		
 		// Stop the game
 		// TODO
@@ -166,6 +186,15 @@ public class ZabriCraftCity extends JavaPlugin {
 				if (!player.isOp()) {
 					player.setGameMode(GameMode.SURVIVAL);
 				}
+			}
+			
+			// Reset emeralds for all players
+			try {
+				Statement state = getConnection().createStatement();
+				state.executeUpdate("UPDATE players SET emeralds = 0");
+				state.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 	}
