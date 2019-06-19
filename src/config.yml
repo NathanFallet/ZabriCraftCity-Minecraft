@@ -1,0 +1,7 @@
+# MySQL database informations
+database:
+  host: 'localhost'
+  database: 'minecraft'
+  user: 'user'
+  password: 'password'
+  port: 3306
