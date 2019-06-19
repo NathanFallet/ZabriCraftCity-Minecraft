@@ -17,8 +17,10 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.nathanfallet.zabricraftcity.commands.BankCmd;
+import me.nathanfallet.zabricraftcity.commands.ChunkCmd;
 import me.nathanfallet.zabricraftcity.events.PlayerChat;
 import me.nathanfallet.zabricraftcity.events.PlayerJoin;
+import me.nathanfallet.zabricraftcity.events.PlayerMove;
 import me.nathanfallet.zabricraftcity.events.PlayerQuit;
 import me.nathanfallet.zabricraftcity.utils.Leaderboard;
 import me.nathanfallet.zabricraftcity.utils.PlayerScoreboard;
@@ -52,6 +54,7 @@ public class ZabriCraftCity extends JavaPlugin {
 			try {
 				Statement state = getConnection().createStatement();
 				state.executeUpdate("CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255) NOT NULL, `pseudo` varchar(255) NOT NULL, `emeralds` int(11) NOT NULL DEFAULT '0', PRIMARY KEY (`uuid`))");
+				state.executeUpdate("CREATE TABLE IF NOT EXISTS `chunks` (`x` int(11) NOT NULL, `z` int(11) NOT NULL, `owner` varchar(255) NOT NULL, PRIMARY KEY (`x`, `z`))");
 				state.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -76,9 +79,11 @@ public class ZabriCraftCity extends JavaPlugin {
 			pm.registerEvents(new PlayerJoin(), this);
 			pm.registerEvents(new PlayerQuit(), this);
 			pm.registerEvents(new PlayerChat(), this);
+			pm.registerEvents(new PlayerMove(), this);
 			
 			// Register commands
 			getCommand("bank").setExecutor(new BankCmd());
+			getCommand("chunk").setExecutor(new ChunkCmd());
 			
 			// Update some shown informations
 			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){

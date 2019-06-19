@@ -49,7 +49,7 @@ public class BankCmd implements CommandExecutor {
 					}
 				}
 				// Retrieve
-				else if (args[0].equalsIgnoreCase("retrieve")) {
+				else if (args[0].equalsIgnoreCase("retrieve") && args.length == 2) {
 					try {
 						// Parse amount
 						int amount = Integer.parseInt(args[1]);

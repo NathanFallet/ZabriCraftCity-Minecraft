@@ -15,12 +15,33 @@ public class ZabriPlayer {
 
 	// Initializer
 	public ZabriPlayer(Player player) {
-		uuid = player.getUniqueId().toString();
+		this.uuid = player.getUniqueId().toString();
+	}
+	
+	public ZabriPlayer(String uuid) {
+		this.uuid = uuid;
 	}
 	
 	// Get UUID
 	public String getUUID(){
 		return uuid;
+	}
+	
+	// Get name
+	public String getName() {
+		try {
+			PreparedStatement state = ZabriCraftCity.getInstance().getConnection().prepareStatement("SELECT pseudo FROM players WHERE uuid = ?");
+			state.setString(1, uuid);
+			ResultSet result = state.executeQuery();
+			result.next();
+			String name = result.getString("pseudo");
+			result.close();
+			state.close();
+			return name;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "null";
 	}
 	
 	// Get amount of emeralds
