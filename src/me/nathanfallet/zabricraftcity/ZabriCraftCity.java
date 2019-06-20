@@ -18,7 +18,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.nathanfallet.zabricraftcity.commands.BankCmd;
 import me.nathanfallet.zabricraftcity.commands.ChunkCmd;
+import me.nathanfallet.zabricraftcity.events.BlockBreak;
+import me.nathanfallet.zabricraftcity.events.BlockPlace;
 import me.nathanfallet.zabricraftcity.events.PlayerChat;
+import me.nathanfallet.zabricraftcity.events.PlayerInteract;
 import me.nathanfallet.zabricraftcity.events.PlayerJoin;
 import me.nathanfallet.zabricraftcity.events.PlayerMove;
 import me.nathanfallet.zabricraftcity.events.PlayerQuit;
@@ -80,6 +83,9 @@ public class ZabriCraftCity extends JavaPlugin {
 			pm.registerEvents(new PlayerQuit(), this);
 			pm.registerEvents(new PlayerChat(), this);
 			pm.registerEvents(new PlayerMove(), this);
+			pm.registerEvents(new PlayerInteract(), this);
+			pm.registerEvents(new BlockPlace(), this);
+			pm.registerEvents(new BlockBreak(), this);
 			
 			// Register commands
 			getCommand("bank").setExecutor(new BankCmd());
