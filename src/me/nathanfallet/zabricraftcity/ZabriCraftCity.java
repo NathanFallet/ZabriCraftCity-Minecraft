@@ -59,6 +59,7 @@ public class ZabriCraftCity extends JavaPlugin {
 				Statement state = getConnection().createStatement();
 				state.executeUpdate("CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255) NOT NULL, `pseudo` varchar(255) NOT NULL, `emeralds` int(11) NOT NULL DEFAULT '0', PRIMARY KEY (`uuid`))");
 				state.executeUpdate("CREATE TABLE IF NOT EXISTS `chunks` (`x` int(11) NOT NULL, `z` int(11) NOT NULL, `owner` varchar(255) NOT NULL, PRIMARY KEY (`x`, `z`))");
+				state.executeUpdate("CREATE TABLE IF NOT EXISTS `leaderboards` (`x` double NOT NULL, `y` double NOT NULL, `z` double NOT NULL, PRIMARY KEY (`x`, `y`, `z`))");
 				state.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -77,6 +78,9 @@ public class ZabriCraftCity extends JavaPlugin {
 					}
 				}
 			}
+			
+			// Initialize leaderboards
+			Leaderboard.initFromDatabase();
 			
 			// Register events
 			PluginManager pm = Bukkit.getPluginManager();
@@ -124,7 +128,6 @@ public class ZabriCraftCity extends JavaPlugin {
 					}
 				}
 			}, 0, 20);
-			
 		}
 	}
 	

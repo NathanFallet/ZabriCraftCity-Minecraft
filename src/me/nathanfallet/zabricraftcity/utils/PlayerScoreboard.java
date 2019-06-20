@@ -20,9 +20,7 @@ public class PlayerScoreboard {
 	
 	// Clear the list
 	public static void clear() {
-		for (PlayerScoreboard current : list) {
-			current.kill();
-		}
+		list.clear();
 	}
 	
 	// Get for uuid
