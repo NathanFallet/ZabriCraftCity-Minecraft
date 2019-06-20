@@ -1,17 +1,20 @@
 package me.nathanfallet.zabricraftcity;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -19,6 +22,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.nathanfallet.zabricraftcity.commands.BankCmd;
 import me.nathanfallet.zabricraftcity.commands.ChunkCmd;
+import me.nathanfallet.zabricraftcity.commands.SetSpawnCmd;
+import me.nathanfallet.zabricraftcity.commands.SpawnCmd;
 import me.nathanfallet.zabricraftcity.events.BlockBreak;
 import me.nathanfallet.zabricraftcity.events.BlockPlace;
 import me.nathanfallet.zabricraftcity.events.EntityExplode;
@@ -27,6 +32,7 @@ import me.nathanfallet.zabricraftcity.events.PlayerInteract;
 import me.nathanfallet.zabricraftcity.events.PlayerJoin;
 import me.nathanfallet.zabricraftcity.events.PlayerMove;
 import me.nathanfallet.zabricraftcity.events.PlayerQuit;
+import me.nathanfallet.zabricraftcity.events.PlayerRespawn;
 import me.nathanfallet.zabricraftcity.utils.Leaderboard;
 import me.nathanfallet.zabricraftcity.utils.PlayerScoreboard;
 import me.nathanfallet.zabricraftcity.utils.ZabriPlayer;
@@ -93,8 +99,11 @@ public class ZabriCraftCity extends JavaPlugin {
 			pm.registerEvents(new BlockPlace(), this);
 			pm.registerEvents(new BlockBreak(), this);
 			pm.registerEvents(new EntityExplode(), this);
+			pm.registerEvents(new PlayerRespawn(), this);
 			
 			// Register commands
+			getCommand("spawn").setExecutor(new SpawnCmd());
+			getCommand("setspawn").setExecutor(new SetSpawnCmd());
 			getCommand("bank").setExecutor(new BankCmd());
 			getCommand("chunk").setExecutor(new ChunkCmd());
 			
@@ -208,6 +217,37 @@ public class ZabriCraftCity extends JavaPlugin {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	// Get spawn
+	public Location getSpawn(){
+		File f = new File("plugins/ZabriCraftCity/spawn.yml");
+		if (!f.exists()) {
+			return Bukkit.getWorlds().get(0).getSpawnLocation();
+		}
+		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
+		Location l = new Location(Bukkit.getWorld(config.getString("world")),
+				config.getDouble("x"), config.getDouble("y"), config.getDouble("z"));
+		l.setYaw(config.getLong("yaw"));
+		l.setPitch(config.getLong("pitch"));
+		return l;
+	}
+	
+	// Set spawn
+	public void setSpawn(Location l){
+		File f = new File("plugins/ZabriCraftCity/spawn.yml");
+		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
+		config.set("world", l.getWorld().getName());
+		config.set("x", l.getX());
+		config.set("y", l.getY());
+		config.set("z", l.getZ());
+		config.set("yaw", l.getYaw());
+		config.set("pitch", l.getPitch());
+		try {
+			config.save(f);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

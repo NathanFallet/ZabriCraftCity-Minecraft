@@ -3,6 +3,10 @@ version: 1.0
 author: NathanFallet
 main: me.nathanfallet.zabricraftcity.ZabriCraftCity
 commands:
+  spawn:
+    description: Go to spawn
+  setspawn:
+    description: Set spawn location
   bank:
     description: Deposit or retrieve emeralds
   chunk:
