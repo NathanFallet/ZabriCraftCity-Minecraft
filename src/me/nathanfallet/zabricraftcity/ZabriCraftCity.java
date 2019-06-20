@@ -28,6 +28,7 @@ import me.nathanfallet.zabricraftcity.events.BlockBreak;
 import me.nathanfallet.zabricraftcity.events.BlockPlace;
 import me.nathanfallet.zabricraftcity.events.EntityExplode;
 import me.nathanfallet.zabricraftcity.events.PlayerChat;
+import me.nathanfallet.zabricraftcity.events.PlayerDeath;
 import me.nathanfallet.zabricraftcity.events.PlayerInteract;
 import me.nathanfallet.zabricraftcity.events.PlayerJoin;
 import me.nathanfallet.zabricraftcity.events.PlayerMove;
@@ -100,6 +101,7 @@ public class ZabriCraftCity extends JavaPlugin {
 			pm.registerEvents(new BlockBreak(), this);
 			pm.registerEvents(new EntityExplode(), this);
 			pm.registerEvents(new PlayerRespawn(), this);
+			pm.registerEvents(new PlayerDeath(), this);
 			
 			// Register commands
 			getCommand("spawn").setExecutor(new SpawnCmd());
