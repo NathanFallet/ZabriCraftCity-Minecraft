@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
+import me.nathanfallet.zabricraftcity.ZabriCraftCity;
 import me.nathanfallet.zabricraftcity.utils.ZabriChunk;
 
 public class BlockPlace implements Listener {
@@ -12,6 +13,13 @@ public class BlockPlace implements Listener {
 	// When a block is placed
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent e) {
+		// Check if the game is playing
+		if (!ZabriCraftCity.getInstance().isPlaying() && !e.getPlayer().isOp()) {
+			e.getPlayer().sendMessage("§cPlease wait, the game has not started yet!");
+			e.setCancelled(true);
+			return;
+		}
+		
 		// Get targeted location
 		Location target = e.getBlock().getLocation();
 		ZabriChunk zc = new ZabriChunk(target.getChunk().getX(), target.getChunk().getZ());

@@ -11,3 +11,5 @@ commands:
     description: Deposit or retrieve emeralds
   chunk:
     description: Buy or sell a chunk
+  start:
+    description: Start the game

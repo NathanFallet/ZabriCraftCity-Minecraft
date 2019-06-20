@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -24,6 +23,7 @@ import me.nathanfallet.zabricraftcity.commands.BankCmd;
 import me.nathanfallet.zabricraftcity.commands.ChunkCmd;
 import me.nathanfallet.zabricraftcity.commands.SetSpawnCmd;
 import me.nathanfallet.zabricraftcity.commands.SpawnCmd;
+import me.nathanfallet.zabricraftcity.commands.StartCmd;
 import me.nathanfallet.zabricraftcity.events.BlockBreak;
 import me.nathanfallet.zabricraftcity.events.BlockPlace;
 import me.nathanfallet.zabricraftcity.events.EntityExplode;
@@ -34,50 +34,57 @@ import me.nathanfallet.zabricraftcity.events.PlayerJoin;
 import me.nathanfallet.zabricraftcity.events.PlayerMove;
 import me.nathanfallet.zabricraftcity.events.PlayerQuit;
 import me.nathanfallet.zabricraftcity.events.PlayerRespawn;
+import me.nathanfallet.zabricraftcity.utils.GameProcess;
 import me.nathanfallet.zabricraftcity.utils.Leaderboard;
 import me.nathanfallet.zabricraftcity.utils.PlayerScoreboard;
 import me.nathanfallet.zabricraftcity.utils.ZabriPlayer;
 
 public class ZabriCraftCity extends JavaPlugin {
-	
+
 	// Store instance to get everywhere
 	private static ZabriCraftCity instance;
-	
+
 	public static ZabriCraftCity getInstance() {
 		return instance;
 	}
-	
+
 	// Stored properties
 	private Connection connection;
-	private boolean playing;
-	
+	private GameProcess process;
+
 	// Enabling the plugin
 	public void onEnable() {
 		// Set current instance
 		instance = this;
-		
+
 		// Configuration files
 		saveDefaultConfig();
 		reloadConfig();
-		
+
 		// Check connection and init
 		if (getConnection() != null) {
 			// Initialize database structure
 			try {
 				Statement state = getConnection().createStatement();
-				state.executeUpdate("CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255) NOT NULL, `pseudo` varchar(255) NOT NULL, `emeralds` int(11) NOT NULL DEFAULT '0', `op` tinyint(1) NOT NULL default '0', PRIMARY KEY (`uuid`))");
-				state.executeUpdate("CREATE TABLE IF NOT EXISTS `chunks` (`x` int(11) NOT NULL, `z` int(11) NOT NULL, `owner` varchar(255) NOT NULL, PRIMARY KEY (`x`, `z`))");
-				state.executeUpdate("CREATE TABLE IF NOT EXISTS `leaderboards` (`x` double NOT NULL, `y` double NOT NULL, `z` double NOT NULL, PRIMARY KEY (`x`, `y`, `z`))");
+				state.executeUpdate(
+						"CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255) NOT NULL, `pseudo` varchar(255) NOT NULL, `emeralds` int(11) NOT NULL DEFAULT '0', `op` tinyint(1) NOT NULL default '0', PRIMARY KEY (`uuid`))");
+				state.executeUpdate(
+						"CREATE TABLE IF NOT EXISTS `chunks` (`x` int(11) NOT NULL, `z` int(11) NOT NULL, `owner` varchar(255) NOT NULL, PRIMARY KEY (`x`, `z`))");
+				state.executeUpdate(
+						"CREATE TABLE IF NOT EXISTS `leaderboards` (`x` double NOT NULL, `y` double NOT NULL, `z` double NOT NULL, PRIMARY KEY (`x`, `y`, `z`))");
 				state.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
+
+			// Load game process
+			process = new GameProcess();
+
 			// Initialize players
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				initPlayer(player);
 			}
-			
+
 			// Clear custom entities
 			for (World w : Bukkit.getWorlds()) {
 				for (Entity e : w.getEntities()) {
@@ -86,10 +93,10 @@ public class ZabriCraftCity extends JavaPlugin {
 					}
 				}
 			}
-			
+
 			// Initialize leaderboards
 			Leaderboard.initFromDatabase();
-			
+
 			// Register events
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new PlayerJoin(), this);
@@ -102,38 +109,43 @@ public class ZabriCraftCity extends JavaPlugin {
 			pm.registerEvents(new EntityExplode(), this);
 			pm.registerEvents(new PlayerRespawn(), this);
 			pm.registerEvents(new PlayerDeath(), this);
-			
+
 			// Register commands
 			getCommand("spawn").setExecutor(new SpawnCmd());
 			getCommand("setspawn").setExecutor(new SetSpawnCmd());
 			getCommand("bank").setExecutor(new BankCmd());
 			getCommand("chunk").setExecutor(new ChunkCmd());
-			
+			getCommand("start").setExecutor(new StartCmd());
+
 			// Update some shown informations
-			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 				@Override
 				public void run() {
+					// Increment timer and get string
+					process.increment();
+					String time = process.toString();
+
 					// Updates
 					for (Player p : Bukkit.getOnlinePlayers()) {
 						// List name
 						p.setPlayerListName(p.getDisplayName());
-						
+
 						// Scoreboard
 						ZabriPlayer zp = new ZabriPlayer(p);
-						
+
 						ArrayList<String> lines = new ArrayList<String>();
 						lines.add("§b");
 						lines.add("§b§lBank: §b(/bank for more)");
 						lines.add("§f" + zp.getEmeralds() + " emeralds");
 						lines.add("§a");
 						lines.add("§a§lTime:");
-						lines.add("§fDay X - 00:00 (todo)");
+						lines.add("§f" + time);
 						lines.add("§e");
 						lines.add("§ezabricraftcity.nathanfallet.me");
-						
+
 						PlayerScoreboard.get(p).update(p, lines);
 					}
-					
+
 					// Update leaderboards
 					for (Leaderboard leaderboard : Leaderboard.getList()) {
 						leaderboard.update();
@@ -142,25 +154,27 @@ public class ZabriCraftCity extends JavaPlugin {
 			}, 0, 20);
 		}
 	}
-	
+
 	// Disable
 	public void onDisable() {
 		// Clear objects
 		Leaderboard.clear();
 		PlayerScoreboard.clear();
-		
-		// Stop the game
-		// TODO
+
+		// Save the game
+		process.save();
 	}
-	
+
 	// MySQL Database connection
 	public Connection getConnection() {
 		try {
 			// If not connected, connect
-			if(connection == null || connection.isClosed()){
+			if (connection == null || connection.isClosed()) {
 				Class.forName("com.mysql.jdbc.Driver");
 				FileConfiguration conf = getConfig();
-				connection = DriverManager.getConnection("jdbc:mysql://"+conf.getString("database.host")+":"+conf.getInt("database.port")+"/"+conf.getString("database.database"),
+				connection = DriverManager.getConnection(
+						"jdbc:mysql://" + conf.getString("database.host") + ":" + conf.getInt("database.port") + "/"
+								+ conf.getString("database.database"),
 						conf.getString("database.user"), conf.getString("database.password"));
 			}
 		} catch (SQLException | ClassNotFoundException e) {
@@ -171,12 +185,13 @@ public class ZabriCraftCity extends JavaPlugin {
 		}
 		return connection;
 	}
-	
+
 	// Initialize a player
 	public void initPlayer(Player p) {
 		try {
 			// Insert or update player informations
-			PreparedStatement state = getConnection().prepareStatement("INSERT INTO players (uuid, pseudo, op) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE pseudo = ?, op = ?");
+			PreparedStatement state = getConnection().prepareStatement(
+					"INSERT INTO players (uuid, pseudo, op) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE pseudo = ?, op = ?");
 			state.setString(1, p.getUniqueId().toString());
 			state.setString(2, p.getName());
 			state.setBoolean(3, p.isOp());
@@ -188,64 +203,50 @@ public class ZabriCraftCity extends JavaPlugin {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// Check if the game is playing
 	public boolean isPlaying() {
-		return playing;
+		return process.isPlaying();
 	}
-	
+
 	// Start the game
 	public void start() {
-		// Check if the game is not already playing
-		if (!playing) {
-			// Set playing
-			playing = true;
-			
-			// Broadcast it
-			Bukkit.broadcastMessage("§6Game is starting. May the best win!");
-			
-			// Change players game mode
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (!player.isOp()) {
-					player.setGameMode(GameMode.SURVIVAL);
-				}
-			}
-			
-			// Reset emeralds for all players
-			try {
-				Statement state = getConnection().createStatement();
-				state.executeUpdate("UPDATE players SET emeralds = 0");
-				state.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		process.start();
 	}
-	
+
+	// Stop the game
+	public void stop() {
+		process.stop();
+	}
+
 	// Get spawn
-	public Location getSpawn(){
+	public Location getSpawn() {
 		File f = new File("plugins/ZabriCraftCity/spawn.yml");
 		if (!f.exists()) {
 			return Bukkit.getWorlds().get(0).getSpawnLocation();
 		}
+
 		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
-		Location l = new Location(Bukkit.getWorld(config.getString("world")),
-				config.getDouble("x"), config.getDouble("y"), config.getDouble("z"));
+		Location l = new Location(Bukkit.getWorld(config.getString("world")), config.getDouble("x"),
+				config.getDouble("y"), config.getDouble("z"));
 		l.setYaw(config.getLong("yaw"));
 		l.setPitch(config.getLong("pitch"));
+
 		return l;
 	}
-	
+
 	// Set spawn
-	public void setSpawn(Location l){
+	public void setSpawn(Location l) {
 		File f = new File("plugins/ZabriCraftCity/spawn.yml");
 		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
+
 		config.set("world", l.getWorld().getName());
 		config.set("x", l.getX());
 		config.set("y", l.getY());
 		config.set("z", l.getZ());
 		config.set("yaw", l.getYaw());
 		config.set("pitch", l.getPitch());
+
 		try {
 			config.save(f);
 		} catch (IOException e) {

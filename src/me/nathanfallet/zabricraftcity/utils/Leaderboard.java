@@ -32,13 +32,13 @@ public class Leaderboard {
 			// Query
 			Statement state = ZabriCraftCity.getInstance().getConnection().createStatement();
 			ResultSet result = state.executeQuery("SELECT * FROM leaderboards");
-			
+
 			// Create each object
 			while (result.next()) {
 				new Leaderboard(new Location(Bukkit.getWorlds().get(0), result.getDouble("x"), result.getDouble("y"),
 						result.getDouble("z")));
 			}
-			
+
 			result.close();
 			state.close();
 		} catch (SQLException e) {
@@ -110,20 +110,26 @@ public class Leaderboard {
 	// Fetch lines
 	public ArrayList<String> getLines() {
 		ArrayList<String> lines = new ArrayList<String>();
-		try {
-			// Fetch data to MySQL Database
-			Statement state = ZabriCraftCity.getInstance().getConnection().createStatement();
-			ResultSet result = state.executeQuery("SELECT * FROM players WHERE emeralds > 0 AND op = 0 ORDER BY emeralds DESC LIMIT 10");
 
-			// Set lines
-			while (result.next()) {
-				lines.add(result.getString("pseudo") + " §6- §e" + result.getInt("emeralds") + " emeralds");
+		// Check if the game is playing
+		if (ZabriCraftCity.getInstance().isPlaying()) {
+			try {
+				// Fetch data to MySQL Database
+				Statement state = ZabriCraftCity.getInstance().getConnection().createStatement();
+				ResultSet result = state.executeQuery(
+						"SELECT * FROM players WHERE emeralds > 0 AND op = 0 ORDER BY emeralds DESC LIMIT 10");
+
+				// Set lines
+				while (result.next()) {
+					lines.add(result.getString("pseudo") + " §6- §e" + result.getInt("emeralds") + " emeralds");
+				}
+				result.close();
+				state.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-			result.close();
-			state.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
+		
 		return lines;
 	}
 
