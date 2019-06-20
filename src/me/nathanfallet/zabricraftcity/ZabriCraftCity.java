@@ -2,6 +2,7 @@ package me.nathanfallet.zabricraftcity;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -57,7 +58,7 @@ public class ZabriCraftCity extends JavaPlugin {
 			// Initialize database structure
 			try {
 				Statement state = getConnection().createStatement();
-				state.executeUpdate("CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255) NOT NULL, `pseudo` varchar(255) NOT NULL, `emeralds` int(11) NOT NULL DEFAULT '0', PRIMARY KEY (`uuid`))");
+				state.executeUpdate("CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255) NOT NULL, `pseudo` varchar(255) NOT NULL, `emeralds` int(11) NOT NULL DEFAULT '0', `op` tinyint(1) NOT NULL default '0', PRIMARY KEY (`uuid`))");
 				state.executeUpdate("CREATE TABLE IF NOT EXISTS `chunks` (`x` int(11) NOT NULL, `z` int(11) NOT NULL, `owner` varchar(255) NOT NULL, PRIMARY KEY (`x`, `z`))");
 				state.executeUpdate("CREATE TABLE IF NOT EXISTS `leaderboards` (`x` double NOT NULL, `y` double NOT NULL, `z` double NOT NULL, PRIMARY KEY (`x`, `y`, `z`))");
 				state.close();
@@ -117,7 +118,7 @@ public class ZabriCraftCity extends JavaPlugin {
 						lines.add("§a§lTime:");
 						lines.add("§fDay X - 00:00 (todo)");
 						lines.add("§e");
-						lines.add("§e§lPlugin by Nathan Fallet");
+						lines.add("§ezabricraftcity.nathanfallet.me");
 						
 						PlayerScoreboard.get(p).update(p, lines);
 					}
@@ -163,19 +164,14 @@ public class ZabriCraftCity extends JavaPlugin {
 	// Initialize a player
 	public void initPlayer(Player p) {
 		try {
-			// Check if player is in database
-			Statement state = getConnection().createStatement();
-			ResultSet result = state.executeQuery("SELECT COUNT(*) as c FROM players WHERE uuid = '"+p.getUniqueId().toString()+"'");
-			result.next();
-			if (result.getInt("c") == 0) {
-				// If not, insert it
-				state.executeUpdate("INSERT INTO players (uuid, pseudo) VALUES('"+p.getUniqueId().toString()+"', '"+p.getName()+"')");
-				Bukkit.broadcastMessage("§eWelcome to §6"+p.getName()+" §eon the server!");
-			} else {
-				// Else just update
-				state.executeUpdate("UPDATE players SET pseudo = '"+p.getName()+"' WHERE uuid = '"+p.getUniqueId().toString()+"'");
-			}
-			result.close();
+			// Insert or update player informations
+			PreparedStatement state = getConnection().prepareStatement("INSERT INTO players (uuid, pseudo, op) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE pseudo = ?, op = ?");
+			state.setString(1, p.getUniqueId().toString());
+			state.setString(2, p.getName());
+			state.setBoolean(3, p.isOp());
+			state.setString(4, p.getName());
+			state.setBoolean(5, p.isOp());
+			state.executeUpdate();
 			state.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

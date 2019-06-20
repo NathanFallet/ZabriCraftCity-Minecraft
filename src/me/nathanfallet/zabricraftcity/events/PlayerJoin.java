@@ -15,9 +15,6 @@ public class PlayerJoin implements Listener {
 		// Initialize the player
 		ZabriCraftCity.getInstance().initPlayer(e.getPlayer());
 		
-		// Set a beautiful welcome message
-		e.setJoinMessage("§a[+] "+(e.getPlayer().isOp() ? "§c" : "§2")+e.getPlayer().getName()+" §ais here!");
-		
 		// Define the game mode and name correctly
 		if (e.getPlayer().isOp()) {
 			// Player is operator

@@ -30,6 +30,8 @@ public class ChunkCmd implements CommandExecutor {
 						player.sendMessage("§eThere is nothing to know about this chunk.");
 					} else if (owner.equals("null")) {
 						player.sendMessage("§eYou can buy this chunk for §65 emeralds §eusing §6/chunk buy§e.");
+					} else if (owner.equals("spawn")) {
+						player.sendMessage("§eThis chunk is part of spawn area.");
 					} else {
 						ZabriPlayer zowner = new ZabriPlayer(owner);
 						player.sendMessage("§eThis chunk is owned by §6" + zowner.getName() + "§e.");
@@ -80,6 +82,13 @@ public class ChunkCmd implements CommandExecutor {
 					} else {
 						player.sendMessage("§cYou don't own this chunk!");
 					}
+				}
+				// Claim to spawn
+				else if (args[0].equalsIgnoreCase("spawn") && player.isOp()) {
+					// Create the chunk
+					zc.setOwner("spawn");
+					
+					player.sendMessage("§aThis chunk is now part of spawn area!");
 				}
 			} else {
 				// Show help

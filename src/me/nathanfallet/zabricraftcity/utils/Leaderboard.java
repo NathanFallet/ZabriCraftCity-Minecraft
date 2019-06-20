@@ -113,7 +113,7 @@ public class Leaderboard {
 		try {
 			// Fetch data to MySQL Database
 			Statement state = ZabriCraftCity.getInstance().getConnection().createStatement();
-			ResultSet result = state.executeQuery("SELECT * FROM players ORDER BY emeralds DESC LIMIT 10");
+			ResultSet result = state.executeQuery("SELECT * FROM players WHERE op = 0 ORDER BY emeralds DESC LIMIT 10");
 
 			// Set lines
 			while (result.next()) {
