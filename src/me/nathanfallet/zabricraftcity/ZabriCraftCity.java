@@ -20,6 +20,7 @@ import me.nathanfallet.zabricraftcity.commands.BankCmd;
 import me.nathanfallet.zabricraftcity.commands.ChunkCmd;
 import me.nathanfallet.zabricraftcity.events.BlockBreak;
 import me.nathanfallet.zabricraftcity.events.BlockPlace;
+import me.nathanfallet.zabricraftcity.events.EntityExplode;
 import me.nathanfallet.zabricraftcity.events.PlayerChat;
 import me.nathanfallet.zabricraftcity.events.PlayerInteract;
 import me.nathanfallet.zabricraftcity.events.PlayerJoin;
@@ -86,6 +87,7 @@ public class ZabriCraftCity extends JavaPlugin {
 			pm.registerEvents(new PlayerInteract(), this);
 			pm.registerEvents(new BlockPlace(), this);
 			pm.registerEvents(new BlockBreak(), this);
+			pm.registerEvents(new EntityExplode(), this);
 			
 			// Register commands
 			getCommand("bank").setExecutor(new BankCmd());
