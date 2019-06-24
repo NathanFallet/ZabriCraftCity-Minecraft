@@ -18,9 +18,9 @@ public class CreatureSpawn implements Listener {
 		if (!e.getLocation().getWorld().equals(ZabriCraftCity.getInstance().getSpawn().getWorld())) {
 			return;
 		}
-		
+
 		// Check for exceptions
-		if (e.getEntityType().equals(EntityType.VILLAGER)) {
+		if (e.getEntityType().equals(EntityType.VILLAGER) || e.getEntityType().equals(EntityType.ARMOR_STAND)) {
 			return;
 		}
 
