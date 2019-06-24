@@ -25,6 +25,7 @@ import me.nathanfallet.zabricraftcity.commands.SetSpawnCmd;
 import me.nathanfallet.zabricraftcity.commands.SpawnCmd;
 import me.nathanfallet.zabricraftcity.commands.StartCmd;
 import me.nathanfallet.zabricraftcity.events.BlockBreak;
+import me.nathanfallet.zabricraftcity.events.BlockIgnite;
 import me.nathanfallet.zabricraftcity.events.BlockPlace;
 import me.nathanfallet.zabricraftcity.events.CreatureSpawn;
 import me.nathanfallet.zabricraftcity.events.EntityDamage;
@@ -103,6 +104,7 @@ public class ZabriCraftCity extends JavaPlugin {
 			// Register events
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new BlockBreak(), this);
+			pm.registerEvents(new BlockIgnite(), this);
 			pm.registerEvents(new BlockPlace(), this);
 			pm.registerEvents(new CreatureSpawn(), this);
 			pm.registerEvents(new EntityDamage(), this);

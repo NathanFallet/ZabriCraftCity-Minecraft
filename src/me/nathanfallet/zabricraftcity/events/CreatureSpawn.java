@@ -1,6 +1,7 @@
 package me.nathanfallet.zabricraftcity.events;
 
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -15,6 +16,11 @@ public class CreatureSpawn implements Listener {
 	public void onCreatureSpawn(CreatureSpawnEvent e) {
 		// Check world
 		if (!e.getLocation().getWorld().equals(ZabriCraftCity.getInstance().getSpawn().getWorld())) {
+			return;
+		}
+		
+		// Check for exceptions
+		if (e.getEntityType().equals(EntityType.VILLAGER)) {
 			return;
 		}
 

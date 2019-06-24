@@ -1,6 +1,7 @@
 package me.nathanfallet.zabricraftcity.events;
 
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -15,6 +16,11 @@ public class EntityDamage implements Listener {
 	public void onEntityDamage(EntityDamageEvent e) {
 		// Check world
 		if (!e.getEntity().getLocation().getWorld().equals(ZabriCraftCity.getInstance().getSpawn().getWorld())) {
+			return;
+		}
+		
+		// Check for exceptions
+		if (!e.getEntityType().equals(EntityType.PLAYER) && !e.getEntityType().equals(EntityType.VILLAGER)) {
 			return;
 		}
 

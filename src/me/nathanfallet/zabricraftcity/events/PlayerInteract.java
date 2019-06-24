@@ -1,6 +1,7 @@
 package me.nathanfallet.zabricraftcity.events;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -30,6 +31,13 @@ public class PlayerInteract implements Listener {
 		if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.PHYSICAL)) {
 			// Get targeted location
 			Location target = e.getClickedBlock().getLocation();
+			
+			// Check for exceptions
+			if (target.getBlock().getType().equals(Material.WATER) || target.getBlock().getType().equals(Material.RAILS) || target.getBlock().getType().equals(Material.POWERED_RAIL)) {
+				return;
+			}
+			
+			// Get chunk owner
 			ZabriChunk zc = new ZabriChunk(target.getChunk().getX(), target.getChunk().getZ());
 			String owner = zc.getOwner();
 
