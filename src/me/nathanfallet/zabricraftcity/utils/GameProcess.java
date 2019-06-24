@@ -26,6 +26,7 @@ public class GameProcess {
 	private int minute;
 	private int hour;
 	private int day;
+	private int message;
 
 	// Initializer
 	public GameProcess() {
@@ -41,6 +42,7 @@ public class GameProcess {
 		minute = config.getInt("minute");
 		hour = config.getInt("hour");
 		day = config.getInt("day");
+		message = config.getInt("message");
 
 		// Update time in worlds
 		for (World w : Bukkit.getWorlds()) {
@@ -57,6 +59,7 @@ public class GameProcess {
 		config.set("minute", minute);
 		config.set("hour", hour);
 		config.set("day", day);
+		config.set("message", message);
 
 		try {
 			config.save(f);
@@ -70,18 +73,23 @@ public class GameProcess {
 		if (playing) {
 			// Increment minute
 			minute++;
-			
+
 			// If 60 minutes, increment hour
 			if (minute > 59) {
 				minute = 0;
 				hour++;
+
+				// If hour is multiple of 5, show a tip
+				if (hour % 5 == 0) {
+					tip();
+				}
 			}
-			
+
 			// If 20 hours, increment day
 			if (hour > 19) {
 				hour = 0;
 				day++;
-				
+
 				// If day is multiple of 3, pop a chest
 				if (day % 3 == 0) {
 					popRandomChest();
@@ -143,13 +151,32 @@ public class GameProcess {
 			if (random.nextInt(100) < item.getProbability()) {
 				// Set randomly in chest
 				chest.getInventory().setItem(random.nextInt(27),
-						new ItemStack(item.getMaterial(), random.nextInt(item.getAmount())));
+						new ItemStack(item.getMaterial(), 1 + random.nextInt(item.getAmount())));
 			}
 		}
 
 		// Broadcast chest location
 		Bukkit.broadcastMessage("§6§lA chest just appeared at " + location.getBlockX() + " / " + location.getBlockY()
 				+ " / " + location.getBlockZ() + ". Be the first to find it!");
+	}
+
+	// Chat tip
+	public void tip() {
+		// List of messages
+		String[] messages = { "Don't forget to deposit your emeralds to your bank!",
+				"Trade with villagers at spawn to get emeralds!", "Be the first to find chests to get more stuff!", "Buy a chunk at spawn to protect your chests!",
+				"Join us on discord for more informations: https://www.groupe-minaste.org/discord" };
+
+		// Broadcast current
+		Bukkit.broadcastMessage("§6§l[Tip] §e" + messages[message]);
+
+		// Increment
+		message++;
+
+		// Reset if too high
+		if (message >= messages.length) {
+			message = 0;
+		}
 	}
 
 	// Start the game
@@ -161,6 +188,7 @@ public class GameProcess {
 			minute = 0;
 			hour = 0;
 			day = 0;
+			message = 0;
 
 			// Set world time
 			for (World w : Bukkit.getWorlds()) {
