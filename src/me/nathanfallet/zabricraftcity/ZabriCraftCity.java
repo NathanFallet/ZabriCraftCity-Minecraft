@@ -228,14 +228,14 @@ public class ZabriCraftCity extends JavaPlugin {
 	public Location getSpawn() {
 		// Check if spawn is already loaded
 		if (spawn != null) {
-			return spawn;
+			return spawn.clone();
 		}
 		
 		// Else load if from file
 		File f = new File("plugins/ZabriCraftCity/spawn.yml");
 		if (!f.exists()) {
 			spawn = Bukkit.getWorlds().get(0).getSpawnLocation();
-			return spawn;
+			return spawn.clone();
 		}
 
 		// Read file content
@@ -245,7 +245,7 @@ public class ZabriCraftCity extends JavaPlugin {
 		spawn.setYaw(config.getLong("yaw"));
 		spawn.setPitch(config.getLong("pitch"));
 
-		return spawn;
+		return spawn.clone();
 	}
 
 	// Set spawn
