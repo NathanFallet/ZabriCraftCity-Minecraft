@@ -26,6 +26,8 @@ import me.nathanfallet.zabricraftcity.commands.SpawnCmd;
 import me.nathanfallet.zabricraftcity.commands.StartCmd;
 import me.nathanfallet.zabricraftcity.events.BlockBreak;
 import me.nathanfallet.zabricraftcity.events.BlockPlace;
+import me.nathanfallet.zabricraftcity.events.CreatureSpawn;
+import me.nathanfallet.zabricraftcity.events.EntityDamage;
 import me.nathanfallet.zabricraftcity.events.EntityExplode;
 import me.nathanfallet.zabricraftcity.events.PlayerChat;
 import me.nathanfallet.zabricraftcity.events.PlayerDeath;
@@ -51,6 +53,7 @@ public class ZabriCraftCity extends JavaPlugin {
 	// Stored properties
 	private Connection connection;
 	private GameProcess process;
+	private Location spawn;
 
 	// Enabling the plugin
 	public void onEnable() {
@@ -99,16 +102,18 @@ public class ZabriCraftCity extends JavaPlugin {
 
 			// Register events
 			PluginManager pm = Bukkit.getPluginManager();
-			pm.registerEvents(new PlayerJoin(), this);
-			pm.registerEvents(new PlayerQuit(), this);
-			pm.registerEvents(new PlayerChat(), this);
-			pm.registerEvents(new PlayerMove(), this);
-			pm.registerEvents(new PlayerInteract(), this);
-			pm.registerEvents(new BlockPlace(), this);
 			pm.registerEvents(new BlockBreak(), this);
+			pm.registerEvents(new BlockPlace(), this);
+			pm.registerEvents(new CreatureSpawn(), this);
+			pm.registerEvents(new EntityDamage(), this);
 			pm.registerEvents(new EntityExplode(), this);
-			pm.registerEvents(new PlayerRespawn(), this);
+			pm.registerEvents(new PlayerChat(), this);
 			pm.registerEvents(new PlayerDeath(), this);
+			pm.registerEvents(new PlayerInteract(), this);
+			pm.registerEvents(new PlayerJoin(), this);
+			pm.registerEvents(new PlayerMove(), this);
+			pm.registerEvents(new PlayerQuit(), this);
+			pm.registerEvents(new PlayerRespawn(), this);
 
 			// Register commands
 			getCommand("spawn").setExecutor(new SpawnCmd());
@@ -221,25 +226,38 @@ public class ZabriCraftCity extends JavaPlugin {
 
 	// Get spawn
 	public Location getSpawn() {
+		// Check if spawn is already loaded
+		if (spawn != null) {
+			return spawn;
+		}
+		
+		// Else load if from file
 		File f = new File("plugins/ZabriCraftCity/spawn.yml");
 		if (!f.exists()) {
-			return Bukkit.getWorlds().get(0).getSpawnLocation();
+			spawn = Bukkit.getWorlds().get(0).getSpawnLocation();
+			return spawn;
 		}
 
+		// Read file content
 		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
-		Location l = new Location(Bukkit.getWorld(config.getString("world")), config.getDouble("x"),
+		spawn = new Location(Bukkit.getWorld(config.getString("world")), config.getDouble("x"),
 				config.getDouble("y"), config.getDouble("z"));
-		l.setYaw(config.getLong("yaw"));
-		l.setPitch(config.getLong("pitch"));
+		spawn.setYaw(config.getLong("yaw"));
+		spawn.setPitch(config.getLong("pitch"));
 
-		return l;
+		return spawn;
 	}
 
 	// Set spawn
 	public void setSpawn(Location l) {
+		// Set spawn
+		spawn = l;
+		
+		// Load file
 		File f = new File("plugins/ZabriCraftCity/spawn.yml");
 		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
 
+		// Set values
 		config.set("world", l.getWorld().getName());
 		config.set("x", l.getX());
 		config.set("y", l.getY());
@@ -247,6 +265,7 @@ public class ZabriCraftCity extends JavaPlugin {
 		config.set("yaw", l.getYaw());
 		config.set("pitch", l.getPitch());
 
+		// Save file
 		try {
 			config.save(f);
 		} catch (IOException e) {

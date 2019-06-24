@@ -67,7 +67,7 @@ public class ChunkCmd implements CommandExecutor {
 						zp.setEmeralds(balance);
 						zc.setOwner("null");
 						player.sendMessage("§aYou sold this chunk for §25 emeralds§a!");
-					} else if (owner.isEmpty() && player.isOp()) {
+					} else if ((owner.isEmpty() || owner.equals("spawn")) && player.isOp()) {
 						// Create the chunk
 						zc.setOwner("null");
 						

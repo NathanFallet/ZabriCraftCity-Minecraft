@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import me.nathanfallet.zabricraftcity.ZabriCraftCity;
 import me.nathanfallet.zabricraftcity.utils.ZabriChunk;
 import me.nathanfallet.zabricraftcity.utils.ZabriPlayer;
 
@@ -13,6 +14,11 @@ public class PlayerMove implements Listener {
 	// When player move
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
+		// Check world
+		if (!e.getPlayer().getWorld().equals(ZabriCraftCity.getInstance().getSpawn().getWorld())) {
+			return;
+		}
+		
 		// Get chunks
 		Chunk from = e.getFrom().getChunk();
 		Chunk to = e.getTo().getChunk();

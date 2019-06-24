@@ -20,6 +20,11 @@ public class PlayerInteract implements Listener {
 			e.setCancelled(true);
 			return;
 		}
+		
+		// Check world
+		if (!e.getPlayer().getWorld().equals(ZabriCraftCity.getInstance().getSpawn().getWorld())) {
+			return;
+		}
 
 		// Check if interaction is linked with a block
 		if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {

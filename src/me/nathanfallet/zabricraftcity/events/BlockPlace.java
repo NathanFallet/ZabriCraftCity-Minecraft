@@ -19,6 +19,11 @@ public class BlockPlace implements Listener {
 			e.setCancelled(true);
 			return;
 		}
+
+		// Check world
+		if (!e.getBlock().getWorld().equals(ZabriCraftCity.getInstance().getSpawn().getWorld())) {
+			return;
+		}
 		
 		// Get targeted location
 		Location target = e.getBlock().getLocation();
