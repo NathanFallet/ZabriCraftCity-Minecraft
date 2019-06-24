@@ -27,7 +27,7 @@ public class PlayerInteract implements Listener {
 		}
 
 		// Check if interaction is linked with a block
-		if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+		if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.PHYSICAL)) {
 			// Get targeted location
 			Location target = e.getClickedBlock().getLocation();
 			ZabriChunk zc = new ZabriChunk(target.getChunk().getX(), target.getChunk().getZ());
