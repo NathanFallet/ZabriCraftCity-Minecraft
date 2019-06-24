@@ -21,22 +21,26 @@ public class PlayerInteract implements Listener {
 			e.setCancelled(true);
 			return;
 		}
-		
+
 		// Check world
 		if (!e.getPlayer().getWorld().equals(ZabriCraftCity.getInstance().getSpawn().getWorld())) {
 			return;
 		}
 
 		// Check if interaction is linked with a block
-		if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.PHYSICAL)) {
+		if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)
+				|| e.getAction().equals(Action.PHYSICAL)) {
 			// Get targeted location
 			Location target = e.getClickedBlock().getLocation();
-			
+
 			// Check for exceptions
-			if (target.getBlock().getType().equals(Material.WATER) || target.getBlock().getType().equals(Material.RAILS) || target.getBlock().getType().equals(Material.POWERED_RAIL)) {
+			if (target.getBlock().getType().equals(Material.WATER)
+					|| target.getBlock().getType().equals(Material.STATIONARY_WATER)
+					|| target.getBlock().getType().equals(Material.RAILS)
+					|| target.getBlock().getType().equals(Material.POWERED_RAIL)) {
 				return;
 			}
-			
+
 			// Get chunk owner
 			ZabriChunk zc = new ZabriChunk(target.getChunk().getX(), target.getChunk().getZ());
 			String owner = zc.getOwner();
