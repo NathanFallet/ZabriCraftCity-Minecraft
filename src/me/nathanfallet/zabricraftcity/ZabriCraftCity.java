@@ -39,6 +39,8 @@ import me.nathanfallet.zabricraftcity.events.PlayerQuit;
 import me.nathanfallet.zabricraftcity.events.PlayerRespawn;
 import me.nathanfallet.zabricraftcity.utils.GameProcess;
 import me.nathanfallet.zabricraftcity.utils.Leaderboard;
+import me.nathanfallet.zabricraftcity.utils.Metrics;
+import me.nathanfallet.zabricraftcity.utils.Metrics2;
 import me.nathanfallet.zabricraftcity.utils.PlayerScoreboard;
 import me.nathanfallet.zabricraftcity.utils.ZabriPlayer;
 
@@ -160,6 +162,15 @@ public class ZabriCraftCity extends JavaPlugin {
 				}
 			}, 0, 20);
 		}
+
+		try {
+			Metrics metrics = new Metrics(this);
+			metrics.start();
+
+			Metrics2 metrics2 = new Metrics2(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// Disable
@@ -232,7 +243,7 @@ public class ZabriCraftCity extends JavaPlugin {
 		if (spawn != null) {
 			return spawn.clone();
 		}
-		
+
 		// Else load if from file
 		File f = new File("plugins/ZabriCraftCity/spawn.yml");
 		if (!f.exists()) {
@@ -242,8 +253,8 @@ public class ZabriCraftCity extends JavaPlugin {
 
 		// Read file content
 		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
-		spawn = new Location(Bukkit.getWorld(config.getString("world")), config.getDouble("x"),
-				config.getDouble("y"), config.getDouble("z"));
+		spawn = new Location(Bukkit.getWorld(config.getString("world")), config.getDouble("x"), config.getDouble("y"),
+				config.getDouble("z"));
 		spawn.setYaw(config.getLong("yaw"));
 		spawn.setPitch(config.getLong("pitch"));
 
@@ -254,7 +265,7 @@ public class ZabriCraftCity extends JavaPlugin {
 	public void setSpawn(Location l) {
 		// Set spawn
 		spawn = l;
-		
+
 		// Load file
 		File f = new File("plugins/ZabriCraftCity/spawn.yml");
 		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
