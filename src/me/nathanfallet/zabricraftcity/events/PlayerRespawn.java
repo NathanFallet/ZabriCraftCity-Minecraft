@@ -12,7 +12,9 @@ public class PlayerRespawn implements Listener {
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent e) {
 		// Set spawn location
-		e.setRespawnLocation(ZabriCraftCity.getInstance().getSpawn());
+		if (!e.isBedSpawn()) {
+			e.setRespawnLocation(ZabriCraftCity.getInstance().getSpawn());
+		}
 	}
 
 }

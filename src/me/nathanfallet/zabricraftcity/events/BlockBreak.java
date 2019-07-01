@@ -28,10 +28,9 @@ public class BlockBreak implements Listener {
 		// Get targeted location
 		Location target = e.getBlock().getLocation();
 		ZabriChunk zc = new ZabriChunk(target.getChunk().getX(), target.getChunk().getZ());
-		String owner = zc.getOwner();
 
 		// Check if can't interact with this block
-		if (!owner.isEmpty() && !owner.equals(e.getPlayer().getUniqueId().toString()) && !e.getPlayer().isOp()) {
+		if (!zc.isAllowed(e.getPlayer().getUniqueId().toString()) && !e.getPlayer().isOp()) {
 			// Cancel interaction
 			e.setCancelled(true);
 			e.getPlayer().sendMessage("§cYou can't break a block here!");

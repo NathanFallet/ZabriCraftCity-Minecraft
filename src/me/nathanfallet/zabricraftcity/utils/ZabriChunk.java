@@ -7,21 +7,22 @@ import java.sql.SQLException;
 import me.nathanfallet.zabricraftcity.ZabriCraftCity;
 
 public class ZabriChunk {
-	
+
 	// Stored properties
 	private int x;
 	private int z;
-	
+
 	// Initializer
 	public ZabriChunk(int x, int z) {
 		this.x = x;
 		this.z = z;
 	}
-	
+
 	// Get owner
-	public String getOwner(){
+	public String getOwner() {
 		try {
-			PreparedStatement state = ZabriCraftCity.getInstance().getConnection().prepareStatement("SELECT owner FROM chunks WHERE x = ? AND z = ?");
+			PreparedStatement state = ZabriCraftCity.getInstance().getConnection()
+					.prepareStatement("SELECT owner FROM chunks WHERE x = ? AND z = ?");
 			state.setInt(1, x);
 			state.setInt(2, z);
 			ResultSet result = state.executeQuery();
@@ -34,11 +35,12 @@ public class ZabriChunk {
 		}
 		return "";
 	}
-	
+
 	// Set owner
-	public void setOwner(String owner){
+	public void setOwner(String owner) {
 		try {
-			PreparedStatement state = ZabriCraftCity.getInstance().getConnection().prepareStatement("INSERT INTO chunks (x, z, owner) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE owner = ?");
+			PreparedStatement state = ZabriCraftCity.getInstance().getConnection().prepareStatement(
+					"INSERT INTO chunks (x, z, owner) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE owner = ?");
 			state.setInt(1, x);
 			state.setInt(2, z);
 			state.setString(3, owner);
@@ -50,4 +52,56 @@ public class ZabriChunk {
 		}
 	}
 
+	// Get friends
+	public String getFriends() {
+		try {
+			PreparedStatement state = ZabriCraftCity.getInstance().getConnection()
+					.prepareStatement("SELECT friends FROM chunks WHERE x = ? AND z = ?");
+			state.setInt(1, x);
+			state.setInt(2, z);
+			ResultSet result = state.executeQuery();
+			result.next();
+			String friends = result.getString("friends");
+			result.close();
+			state.close();
+			return friends;
+		} catch (SQLException e) {
+		}
+		return "";
+	}
+
+	// Set owner
+	public void setFriends(String friends) {
+		try {
+			PreparedStatement state = ZabriCraftCity.getInstance().getConnection()
+					.prepareStatement("UPDATE chunks SET friends = ? WHERE x = ? AND z = ?");
+			state.setString(1, friends);
+			state.setInt(2, x);
+			state.setInt(3, z);
+			state.executeUpdate();
+			state.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Check if a player is allowed to interact
+	public boolean isAllowed(String uuid) {
+		// Check for owner
+		String owner = getOwner();
+		if (owner.isEmpty() || owner.equals(uuid)) {
+			return true;
+		}
+		
+		// Check friends
+		String[] friends = getFriends().split(";");
+		for (String friend : friends) {
+			if (friend.equals(uuid)) {
+				return true;
+			}
+		}
+		
+		// Player is not allowed
+		return false;
+	}
 }

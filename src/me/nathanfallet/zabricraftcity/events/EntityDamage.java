@@ -30,7 +30,7 @@ public class EntityDamage implements Listener {
 		String owner = zc.getOwner();
 
 		// Check if it can damage
-		if (owner.equals("spawn") || owner.equals("null")) {
+		if (!owner.isEmpty()) {
 			// Cancel damages
 			e.setCancelled(true);
 		}

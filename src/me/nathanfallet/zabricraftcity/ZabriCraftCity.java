@@ -75,7 +75,7 @@ public class ZabriCraftCity extends JavaPlugin {
 				state.executeUpdate(
 						"CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255) NOT NULL, `pseudo` varchar(255) NOT NULL, `emeralds` int(11) NOT NULL DEFAULT '0', `op` tinyint(1) NOT NULL default '0', PRIMARY KEY (`uuid`))");
 				state.executeUpdate(
-						"CREATE TABLE IF NOT EXISTS `chunks` (`x` int(11) NOT NULL, `z` int(11) NOT NULL, `owner` varchar(255) NOT NULL, PRIMARY KEY (`x`, `z`))");
+						"CREATE TABLE IF NOT EXISTS `chunks` (`x` int(11) NOT NULL, `z` int(11) NOT NULL, `owner` varchar(255) NOT NULL, `friends` longtext NOT NULL, PRIMARY KEY (`x`, `z`))");
 				state.executeUpdate(
 						"CREATE TABLE IF NOT EXISTS `leaderboards` (`x` double NOT NULL, `y` double NOT NULL, `z` double NOT NULL, PRIMARY KEY (`x`, `y`, `z`))");
 				state.close();

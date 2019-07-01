@@ -43,10 +43,9 @@ public class PlayerInteract implements Listener {
 
 			// Get chunk owner
 			ZabriChunk zc = new ZabriChunk(target.getChunk().getX(), target.getChunk().getZ());
-			String owner = zc.getOwner();
 
 			// Check if can't interact with this block
-			if (!owner.isEmpty() && !owner.equals(e.getPlayer().getUniqueId().toString()) && !e.getPlayer().isOp()) {
+			if (!zc.isAllowed(e.getPlayer().getUniqueId().toString()) && !e.getPlayer().isOp()) {
 				// Cancel interaction
 				e.setCancelled(true);
 				e.getPlayer().sendMessage("§cYou can't interact with this block here!");
