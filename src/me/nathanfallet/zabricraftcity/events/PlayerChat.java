@@ -29,7 +29,7 @@ public class PlayerChat implements Listener {
 		for (Player pls : Bukkit.getOnlinePlayers()) {
 			if (e.getMessage().contains(" "+pls.getName()+" ")) {
 				// play a sound and color the name
-				pls.playSound(pls.getLocation(), Sound.NOTE_PIANO, 10, 1);
+				pls.playSound(pls.getLocation(), Sound.BLOCK_NOTE_BELL, 10, 1);
 				e.setMessage(e.getMessage().replaceAll(" "+pls.getName()+" ", " §b@"+pls.getName()+"§r "));
 			}
 		}
