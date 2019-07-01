@@ -40,7 +40,7 @@ public class ZabriChunk {
 	public void setOwner(String owner) {
 		try {
 			PreparedStatement state = ZabriCraftCity.getInstance().getConnection().prepareStatement(
-					"INSERT INTO chunks (x, z, owner) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE owner = ?");
+					"INSERT INTO chunks (x, z, owner, friends) VALUES(?, ?, ?, '') ON DUPLICATE KEY UPDATE owner = ?");
 			state.setInt(1, x);
 			state.setInt(2, z);
 			state.setString(3, owner);
