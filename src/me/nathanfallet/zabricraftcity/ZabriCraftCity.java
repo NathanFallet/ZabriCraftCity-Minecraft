@@ -31,7 +31,6 @@ import me.nathanfallet.zabricraftcity.events.CreatureSpawn;
 import me.nathanfallet.zabricraftcity.events.EntityDamage;
 import me.nathanfallet.zabricraftcity.events.EntityExplode;
 import me.nathanfallet.zabricraftcity.events.PlayerChat;
-import me.nathanfallet.zabricraftcity.events.PlayerDeath;
 import me.nathanfallet.zabricraftcity.events.PlayerInteract;
 import me.nathanfallet.zabricraftcity.events.PlayerInteractEntity;
 import me.nathanfallet.zabricraftcity.events.PlayerJoin;
@@ -113,7 +112,6 @@ public class ZabriCraftCity extends JavaPlugin {
 			pm.registerEvents(new EntityDamage(), this);
 			pm.registerEvents(new EntityExplode(), this);
 			pm.registerEvents(new PlayerChat(), this);
-			pm.registerEvents(new PlayerDeath(), this);
 			pm.registerEvents(new PlayerInteract(), this);
 			pm.registerEvents(new PlayerInteractEntity(), this);
 			pm.registerEvents(new PlayerJoin(), this);
