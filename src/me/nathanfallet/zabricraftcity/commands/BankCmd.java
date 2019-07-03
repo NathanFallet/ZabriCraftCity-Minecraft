@@ -71,18 +71,26 @@ public class BankCmd implements CommandExecutor {
 						player.sendMessage("§4" + args[1] + " §cis not a valid number!");
 					}
 				}
+				// Show help
+				else {
+					sendHelp(sender);
+				}
 			} else {
 				// Show help
-				player.sendMessage("§e---- §6Bank §e----\n"
-						+ "§6/bank balance§f: Show how many emeralds you have on your account\n"
-						+ "§6/bank deposit <amount>§f: Deposit <amount> emeralds on your account\n"
-						+ "§6/bank retrieve <amount>§f: Retrieve <amount> emeralds on your account\n");
+				sendHelp(sender);
 			}
 		} else {
 			sender.sendMessage("§cOnly players can execute this command!");
 		}
 
 		return true;
+	}
+	
+	public void sendHelp(CommandSender sender) {
+		sender.sendMessage("§e---- §6Bank §e----\n"
+				+ "§6/bank balance§f: Show how many emeralds you have on your account\n"
+				+ "§6/bank deposit <amount>§f: Deposit <amount> emeralds on your account\n"
+				+ "§6/bank retrieve <amount>§f: Retrieve <amount> emeralds on your account\n");
 	}
 
 }

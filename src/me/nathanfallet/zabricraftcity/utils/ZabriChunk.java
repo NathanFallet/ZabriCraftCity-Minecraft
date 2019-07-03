@@ -3,6 +3,9 @@ package me.nathanfallet.zabricraftcity.utils;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import me.nathanfallet.zabricraftcity.ZabriCraftCity;
 
@@ -85,6 +88,40 @@ public class ZabriChunk {
 		}
 	}
 
+	// Add friend
+	public void addFriend(String uuid) {
+		// Get friends
+		List<String> friends = new ArrayList<String>(Arrays.asList(getFriends().split(";")));
+
+		// Check if already exists
+		if (friends.contains(uuid)) {
+			return;
+		}
+
+		// Add UUID
+		friends.add(uuid);
+
+		// Save
+		setFriends(String.join(";", friends));
+	}
+
+	// Remove friend
+	public void removeFriend(String uuid) {
+		// Get friends
+		List<String> friends = new ArrayList<String>(Arrays.asList(getFriends().split(";")));
+
+		// Check if already exists
+		if (!friends.contains(uuid)) {
+			return;
+		}
+
+		// Remove UUID
+		friends.remove(uuid);
+
+		// Save
+		setFriends(String.join(";", friends));
+	}
+
 	// Check if a player is allowed to interact
 	public boolean isAllowed(String uuid) {
 		// Check for owner
@@ -92,7 +129,7 @@ public class ZabriChunk {
 		if (owner.isEmpty() || owner.equals(uuid)) {
 			return true;
 		}
-		
+
 		// Check friends
 		String[] friends = getFriends().split(";");
 		for (String friend : friends) {
@@ -100,7 +137,7 @@ public class ZabriChunk {
 				return true;
 			}
 		}
-		
+
 		// Player is not allowed
 		return false;
 	}
