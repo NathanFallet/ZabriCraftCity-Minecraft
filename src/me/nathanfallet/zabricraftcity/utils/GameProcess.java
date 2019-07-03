@@ -137,16 +137,7 @@ public class GameProcess {
 		Chest chest = (Chest) location.getBlock().getState();
 
 		// Fill with random items
-		ChestItem[] available = { new ChestItem(Material.ROTTEN_FLESH, 50, 16), new ChestItem(Material.STRING, 50, 16),
-				new ChestItem(Material.SULPHUR, 50, 16), new ChestItem(Material.BONE, 50, 16),
-				new ChestItem(Material.ARROW, 50, 16), new ChestItem(Material.PORK, 50, 16),
-				new ChestItem(Material.RAW_CHICKEN, 50, 16), new ChestItem(Material.RAW_BEEF, 50, 16),
-				new ChestItem(Material.WHEAT, 50, 16), new ChestItem(Material.POTATO_ITEM, 50, 16),
-				new ChestItem(Material.CARROT_ITEM, 50, 16), new ChestItem(Material.LEATHER, 30, 8),
-				new ChestItem(Material.IRON_INGOT, 30, 8), new ChestItem(Material.GOLD_INGOT, 20, 8),
-				new ChestItem(Material.DIAMOND, 10, 4), new ChestItem(Material.EMERALD, 5, 2) };
-
-		for (ChestItem item : available) {
+		for (ChestItem item : ItemUtils.getRandomChestItems()) {
 			// Check probability
 			if (random.nextInt(100) < item.getProbability()) {
 				// Set randomly in chest
