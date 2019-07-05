@@ -7,12 +7,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import me.nathanfallet.zabricraftcity.ZabriCraftCity;
 import me.nathanfallet.zabricraftcity.utils.ZabriPlayer;
 
 public class BankCmd implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (!ZabriCraftCity.getInstance().isPlaying()) {
+			sender.sendMessage("§cBank is not available at this time of game!");
+			return true;
+		}
 		if (sender instanceof Player) {
 			// Get basic informations and balance
 			Player player = (Player) sender;

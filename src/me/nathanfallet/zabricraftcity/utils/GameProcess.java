@@ -23,6 +23,7 @@ public class GameProcess {
 
 	// Stored properties
 	private boolean playing;
+	private boolean stopped;
 	private int minute;
 	private int hour;
 	private int day;
@@ -39,6 +40,7 @@ public class GameProcess {
 		// Load vars
 		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
 		playing = config.getBoolean("playing");
+		stopped = config.getBoolean("stopped");
 		minute = config.getInt("minute");
 		hour = config.getInt("hour");
 		day = config.getInt("day");
@@ -56,6 +58,7 @@ public class GameProcess {
 		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
 
 		config.set("playing", playing);
+		config.set("stopped", stopped);
 		config.set("minute", minute);
 		config.set("hour", hour);
 		config.set("day", day);
@@ -101,6 +104,11 @@ public class GameProcess {
 	// Check if the game is playing
 	public boolean isPlaying() {
 		return playing;
+	}
+
+	// Check if the game is stopped
+	public boolean isStopped() {
+		return stopped;
 	}
 
 	// Get time as string
@@ -155,7 +163,8 @@ public class GameProcess {
 	public void tip() {
 		// List of messages
 		String[] messages = { "Don't forget to deposit your emeralds to your bank!",
-				"Trade with villagers at spawn to get emeralds!", "Be the first to find chests to get more stuff!", "Buy a chunk at spawn to protect your chests!",
+				"Trade with villagers at spawn to get emeralds!", "Be the first to find chests to get more stuff!",
+				"Buy a chunk at spawn to protect your chests!",
 				"Join us on discord for more informations: https://www.groupe-minaste.org/discord" };
 
 		// Broadcast current
@@ -173,7 +182,7 @@ public class GameProcess {
 	// Start the game
 	public void start() {
 		// Check if the game is not already playing
-		if (!playing) {
+		if (!playing && !stopped) {
 			// Set playing and time
 			playing = true;
 			minute = 0;
@@ -196,15 +205,6 @@ public class GameProcess {
 					player.setGameMode(GameMode.SURVIVAL);
 				}
 			}
-
-			// Reset emeralds for all players
-			try {
-				Statement state = ZabriCraftCity.getInstance().getConnection().createStatement();
-				state.executeUpdate("UPDATE players SET emeralds = 0");
-				state.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -214,9 +214,11 @@ public class GameProcess {
 		if (playing) {
 			// Set playing
 			playing = false;
+			stopped = true;
 
 			// Broadcast it
 			Bukkit.broadcastMessage("§6§lIt's the end of the game!");
+			Bukkit.broadcastMessage("§6§lCheck out the leaderboard to know who is the winner.");
 
 			// Change players game mode
 			for (Player player : Bukkit.getOnlinePlayers()) {

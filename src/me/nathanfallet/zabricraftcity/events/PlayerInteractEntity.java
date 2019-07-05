@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.MerchantRecipe;
 
+import me.nathanfallet.zabricraftcity.ZabriCraftCity;
 import me.nathanfallet.zabricraftcity.utils.ItemUtils;
 
 public class PlayerInteractEntity implements Listener {
@@ -18,6 +19,11 @@ public class PlayerInteractEntity implements Listener {
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
 		// Check if entity is a Villager
 		if (!(e.getRightClicked() instanceof Villager)) {
+			return;
+		}
+		
+		if (!ZabriCraftCity.getInstance().isPlaying()) {
+			e.getPlayer().sendMessage("§cVillagers are not available at this time of game!");
 			return;
 		}
 

@@ -227,6 +227,11 @@ public class ZabriCraftCity extends JavaPlugin {
 		return process.isPlaying();
 	}
 
+	// Check if the game is stopped
+	public boolean isStopped() {
+		return process.isStopped();
+	}
+
 	// Start the game
 	public void start() {
 		process.start();

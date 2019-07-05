@@ -111,8 +111,8 @@ public class Leaderboard {
 	public ArrayList<String> getLines() {
 		ArrayList<String> lines = new ArrayList<String>();
 
-		// Check if the game is playing
-		if (ZabriCraftCity.getInstance().isPlaying()) {
+		// Check if the game is playing or stopped
+		if (ZabriCraftCity.getInstance().isPlaying() || ZabriCraftCity.getInstance().isStopped()) {
 			try {
 				// Fetch data to MySQL Database
 				Statement state = ZabriCraftCity.getInstance().getConnection().createStatement();

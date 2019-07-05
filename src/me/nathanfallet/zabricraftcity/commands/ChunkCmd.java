@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.nathanfallet.zabricraftcity.ZabriCraftCity;
 import me.nathanfallet.zabricraftcity.utils.ZabriChunk;
 import me.nathanfallet.zabricraftcity.utils.ZabriPlayer;
 
@@ -15,6 +16,10 @@ public class ChunkCmd implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (!ZabriCraftCity.getInstance().isPlaying()) {
+			sender.sendMessage("§cChunk management is not available at this time of game!");
+			return true;
+		}
 		if (sender instanceof Player) {
 			// Get basic informations and balance
 			Player player = (Player) sender;
